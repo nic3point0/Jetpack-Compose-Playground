@@ -3,16 +3,16 @@ This is the API of version 1.1.1
 -->
 # AndroidView
 
-Altough Compose itself is independent from the classic Android View system, in Android Apps it is possible to use Views(any class extends android.view.View) inside of Compose.
-This example will show you, how you can use a **android.widget.Button**, an **android.widget.TextView** and an **android.widget.ImageView** alongside with an Compose Button.
+Altough Compose itself is independent from the classic Android View system, in Android Apps it is possible to use Views(any class that extends `android.view.View`) inside Composables.
+In this example you will see how you can use `android.widget.Button`, `android.widget.TextView` and **android.widget.ImageView** alongside a Compose Button.
 
 
 <p align="center">
   <img src ="{{ site.images }}/viewinterop/androidview/androidview.png" height=100 width=300  />
 </p>
 
-In the example above you can see a @Composable() with a Column and a counter state. The ImageView is loading an drawable.
-The compose button and the wiget.Button will both update the counter and the TextView will display the value of counter. See below how **AndroidView()** is working.
+In the example bellow you can see a `@Composable()` with a `Column()` and a counter state variable. The ImageView displays a drawable.
+The compose button and the wiget.Button will both update the counter and the TextView will display the value of counter.
 
 
 ```kotlin
@@ -21,22 +21,23 @@ fun EmbeddedAndroidViewDemo() {
     Column {
         val state = remember { mutableStateOf(0) }
 
-        //widget.ImageView
+        // use widget.ImageView
         AndroidView(factory = { ctx ->
+        
+            // Initialize a View or View hierarchy here
             ImageView(ctx).apply {
                 val drawable = ContextCompat.getDrawable(ctx, R.drawable.composelogo)
                 setImageDrawable(drawable)
             }
         })
 
-        //Compose Button
+        // using a Compose Button
         androidx.compose.material.Button(onClick = { state.value++ }) {
             Text("MyComposeButton")
         }
 
-        //widget.Button
+
         AndroidView(factory = { ctx ->
-            //Here you can construct your View
             android.widget.Button(ctx).apply {
                 text = "MyAndroidButton"
                 layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
@@ -46,13 +47,14 @@ fun EmbeddedAndroidViewDemo() {
             }
         }, modifier = Modifier.padding(8.dp))
 
-        //widget.TextView
         AndroidView(factory = { ctx ->
-            //Here you can construct your View
+
             TextView(ctx).apply {
                 layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
             }
         }, update = {
+        
+            // Update TextView with current state
             it.text = "You have clicked the buttons: " + state.value.toString() + " times"
         })
     }
